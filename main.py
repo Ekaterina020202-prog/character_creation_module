@@ -1,127 +1,128 @@
+# Импортируем функцию стандартного модуля random.
+# Генерирует случайное целое число в заданном диапазоне.
 from random import randint
-from graphic_arts.start_game_banner import run_screensaver
 
+# Число 5 — это значение стандартной атаки,оно неизменяемо.
+DEFAULT_ATTACK = 5
+# Стандартное неизменяемое значение защиты.
+DEFAULT_DEFENCE = 10
+# Стандартное неизменяемое значение выносливости.
+DEFAULT_STAMINA = 80
 
-def attack(char_name: str, char_class: str = None) -> str:
-    """
-    Симулирует действие атаки в зависимости от класса персонажа.
+# Новая константа. Объявляем родительский класс.
+class Character:
+    BRIEF_DESC_CHAR_CLASS = 'отважный любитель приключений'
+    # Константа для диапазона очков урона.
+    RANGE_VALUE_ATTACK = (1, 3)
+    # Новая переменная класса — диапазон значения защиты.
+    RANGE_VALUE_DEFENCE = (1, 5)
+    # Значение очков урона, для базового класса, оно будет равно 15.
+    SPECIAL_BUFF = 15
+    # Название умения, значение.
+    SPECIAL_SKILL = 'Удача'
 
-    Args:
-        char_name (str): Имя персонажа.
-        char_class (str, опционально): Класс персонажа (warrior, mage, healer).
+    # Объявляем конструктор класса.
+    def __init__(self, name):
+        self.name = name
 
-    Returns:
-        str: Сообщение, описывающее действие атаки.
-    """
-    if char_class == 'warrior':
-        return (f'{char_name} нанёс противнику урон, '
-                f'равный {5 + randint(3, 5)} очкам урона.')
-    if char_class == 'mage':
-        return (f'{char_name} нанёс противнику урон, '
-                f'равный {5 + randint(5, 10)} очкам урона.')
-    if char_class == 'healer':
-        return (f'{char_name} нанёс противнику урон, '
-                f'равный {5 + randint(-3, -1)} очкам урона.')
+    # Объявляем метод атаки.
+    def attack(self):
+        # Вместо диапазона записана переменная класса.
+        # Оператор * распаковывает передаваемый кортеж.
+        value_attack = DEFAULT_ATTACK + randint(*self.RANGE_VALUE_ATTACK)
+        # Описываем метод атаки.
+        return (f'{self.name} нанёс противнику урон, равный {value_attack}')
 
+    # Объявляем метод защиты.
+    def defence(self):
+        # Вычисляем значение защиты в переменной value_defence.
+        value_defence = DEFAULT_DEFENCE + randint(*self.RANGE_VALUE_DEFENCE)
+        return (f'{self.name} блокировал {value_defence} ед. урона')
 
-def defence(char_name: str, char_class: str = None) -> str:
-    """
-    Симулирует действие защиты в зависимости от класса персонажа.
+    # Объявляем метод специального умения.
+    def special(self):
+        # Здесь описано тело метода special().
+        return (f'{self.name} применил специальное умение '
+                f'"{self.SPECIAL_SKILL} {self.SPECIAL_BUFF}"')
 
-    Args:
-        char_name (str): Имя персонажа.
-        char_class (str, опционально): Класс персонажа (warrior, mage, healer).
+    # Новый метод базового класса.Чтобы вывести имя у объекта класса есть специальный атрибут __class__.__name__
+    def __str__(self):
+        return f'{self.__class__.__name__} - {self.BRIEF_DESC_CHAR_CLASS}.'
 
-    Returns:
-        str: Сообщение, описывающее действие защиты.
-    """
-    if char_class == 'warrior':
-        return f'{char_name} блокировал {10 + randint(5, 10)} очков урона.'
-    if char_class == 'mage':
-        return f'{char_name} блокировал {10 + randint(-2, 2)} очков урона.'
-    if char_class == 'healer':
-        return f'{char_name} блокировал {10 + randint(2, 5)} очков урона.'
+    # Далее описываем классы-наследники.
+class Warrior(Character):
+    BRIEF_DESC_CHAR_CLASS = (' дерзкий воин ближнего боя. '
+                                 'Сильный, выносливый и отважный')
+    RANGE_VALUE_ATTACK = (3, 5)
+    RANGE_VALUE_DEFENCE = (5, 10)
+    SPECIAL_BUFF = DEFAULT_STAMINA + 25
+    SPECIAL_SKILL = 'Выносливость'
 
+class Mage(Character):
+    BRIEF_DESC_CHAR_CLASS = (' находчивый воин дальнего боя. '
+                                 'Обладает высоким интеллектом')
+    RANGE_VALUE_ATTACK = (5, 10)
+    RANGE_VALUE_DEFENCE = (-2, 2)
+    SPECIAL_BUFF = DEFAULT_ATTACK + 40
+    SPECIAL_SKILL = 'Атака'
 
-def special(char_name: str, char_class: str = None) -> str:
-    """
-    Симулирует действие защиты в зависимости от класса персонажа.
+class Healer(Character):
+    BRIEF_DESC_CHAR_CLASS = (' могущественный заклинатель. '
+                                 'Черпает силы из природы, веры и духов')
+    RANGE_VALUE_ATTACK = (-3, -1)
+    RANGE_VALUE_DEFENCE = (2, 5)
+    SPECIAL_BUFF = DEFAULT_DEFENCE + 30
+    SPECIAL_SKILL = 'Защита'
 
-    Args:
-        char_name (str): Имя персонажа.
-        char_class (str, опционально): Класс персонажа (warrior, mage, healer).
+        # Новая функция.
+        # Добавили новый параметр — char_name.
 
-    Returns:
-        str: Сообщение, описывающее использование специальной способности.
-    """
-    if char_class == 'warrior':
-        return f'{char_name} применил спец умение "Выносливость {80 + 25}"'
-    if char_class == 'mage':
-        return f'{char_name} применил спец умение "Атака {5 + 40}"'
-    if char_class == 'healer':
-        return f'{char_name} применил спец умение "Защита {10 + 30}"'
+    def choice_char_class(char_name: str) -> Character:
+        """
+        Возвращает строку с выбранным
+        классом персонажа.
+        """
+        # Добавили словарь, в котором соотносится ввод пользователя и класс персонажа.
+        game_classes = {'warrior': Warrior, 'mage': Mage, 'healer': Healer}
 
+        approve_choice: str = None
 
-def start_training(char_name: str, char_class: str = None) -> str:
-    """
-    Начинает сессию тренировок для персонажа.
+        while approve_choice != 'y':
+            selected_class = input('Введи название персонажа, '
+                                   'за которого хочешь играть: Воитель — warrior, '
+                                   'Маг — mage, Лекарь — healer: ')
+            char_class: Character = game_classes[selected_class](char_name)
+            # Вывели в терминал описание персонажа.
+            print(char_class)
+            approve_choice = input('Нажми (Y), чтобы подтвердить выбор, '
+                                   'или любую другую кнопку, '
+                                   'чтобы выбрать другого персонажа ').lower()
+        return char_class
 
-    Args:
-        char_name (str): Имя персонажа.
-        char_class (str, опционально): Класс персонажа (warrior, mage, healer).
+    def start_training(character):
+        """
+        Принимает на вход экземпляр класса Character.
+        Возвращает сообщения о результатах цикла тренировки персонажа.
+        """
+        char_class = character.__class__.__name__.lower()
+        char_name = character.name
+        print(f'{char_name}, ты {char_class} — {character.description}.')
+        print('Потренируйся управлять своими навыками.')
+        print('Введи одну из команд: attack — чтобы атаковать противника, '
+              'defence — чтобы блокировать атаку противника или '
+              'special — чтобы использовать свою суперсилу.')
+        print('Если не хочешь тренироваться, введи команду skip.')
 
-    Returns:
-        str: Сообщение, указывающее на окончание сессии тренировок.
-    """
-    if char_class == 'warrior':
-        class_description = 'Воитель — могучий боец в ближнем бою.'
-    if char_class == 'mage':
-        class_description = 'Маг — искусный владыка стихийной магии.'
-    if char_class == 'healer':
-        class_description = 'Лекарь — сильный исцелитель ран.'
+        actions = {
+            'attack': character.attack,
+            'defence': character.defence,
+            'special': character.special
+        }
 
-    print(f'Добро пожаловать, {char_name}!')
-    print(f'Вы выбрали путь {class_description}')
-    print('Тренируйтесь, чтобы овладеть своими навыками.')
-    print('Введите одну из следующих команд: attack — для атаки, '
-          'defence — для защиты от атаки или '
-          'special — для использования специальной способности.')
-    print('Если вы хотите пропустить тренировку, введите команду "skip".')
-    cmd = None
-    while cmd != 'skip':
-        cmd = input('Введите команду: ')
-        if cmd == 'attack':
-            print(attack(char_name, char_class))
-        if cmd == 'defence':
-            print(defence(char_name, char_class))
-        if cmd == 'special':
-            print(special(char_name, char_class))
-    return 'Сессия тренировок завершена.'
+        cmd = None
+        while cmd != 'skip':
+            cmd = input('Введи команду: ')
+            if cmd in actions:
+                print(actions[cmd]())
 
-
-def choice_char_class() -> str:
-    """
-    Запрашивает у игрока выбор класса персонажа.
-
-    Returns:
-        str: Выбранный класс персонажа (warrior, mage, healer).
-    """
-    approve_choice = ''
-    char_class = ''
-    while approve_choice != 'y':
-        char_class = input('Выберите класс персонажа: Воитель, Маг, Лекарь: ')
-        if char_class == 'warrior':
-            print('Воитель — бесстрашный боец в ближнем бою. '
-                  'Сильный, выносливый и смелый.')
-        if char_class == 'mage':
-            print('Маг — умелый волшебник издалека. '
-                  'Обладает высоким интеллектом.')
-        if char_class == 'healer':
-            print('Лекарь — могущественный целитель. '
-                  'Извлекает силу из природы, веры и духов.')
-        approve_choice = input('Нажмите (Y), чтобы подтвердить выбор, '
-                               'или любую другую клавишу, '
-                               'чтобы выбрать другой класс: ').lower()
-    return char_class
-if __name__ == '__main__':
-    run_screensaver()
+        return 'Тренировка окончена.'
